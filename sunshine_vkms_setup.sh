@@ -2,6 +2,16 @@
 set -e
 
 echo "=== Creating streaming user ==="
+
+# Ensure required groups exist
+for grp in video render tty; do
+    if ! getent group "$grp" >/dev/null; then
+        echo "Creating group: $grp"
+        groupadd "$grp"
+    fi
+done
+
+# Create the streamer user
 if ! id "streamer" &>/dev/null; then
     useradd -m -G video,render,tty streamer
     echo "Set password for 'streamer':"
