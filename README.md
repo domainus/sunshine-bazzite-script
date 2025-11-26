@@ -1,5 +1,5 @@
 # sunshine-bazzite-script
-Scripts to get an Apollo-like, controller-friendly Sunshine setup running on Bazzite with a virtual display.
+Scripts to get an Sunshine setup running on Bazzite with a virtual display.
 
 ## Scripts
 - `virtual_display_setup.sh` — build and install a custom EDID RPM. Prompts for your EDID `.bin`, layers prerequisites if needed, patches initramfs, and appends the kernel arg.
