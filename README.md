@@ -15,12 +15,27 @@ Scripts to get an Sunshine setup running on Bazzite with a virtual display.
 1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
 2) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.
 3) To remove the EDID patch, run `sudo ./virtual_display_uninstall.sh` and reboot.
+4) WIP
+5) Update `sunshine.conf` with the following:
+`global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}`
 
 ## Example EDID
 The provided example_edid.bin supports various resolutions including 4k@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90hz, amongst other more standard resolutions.
+
+## Default Steam Launch Commands
+`LD_PRELOAD=""
+PROTON_HIDE_NVIDIA_GPU=0 
+PROTON_ENABLE_NVAPI=1 
+gamescope -f -b 
+    -H $(kscreen-doctor -j | jq '.screen.currentSize.height') 
+    --hdr-enabled 
+    --adaptive-sync 
+    -- %command%
+`
 
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
 https://gist.github.com/iamthenuggetman/6d0884954653940596d463a48b2f459c  
 https://www.azdanov.dev/articles/2025/how-to-create-a-virtual-display-for-sunshine-on-arch-linux
+https://www.reddit.com/r/linux_gaming/comments/1h2o0re/comment/mtq730l/
