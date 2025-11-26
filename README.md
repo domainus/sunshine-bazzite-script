@@ -1,10 +1,11 @@
 # sunshine-bazzite-script
-Scripts to get a Sunshine setup running on Bazzite with a virtual display.
+Scripts to get a Sunshine setup running on Bazzite with a virtual display (custom EDID + headless VKMS).
 
 ## Scripts
 - `virtual_display_setup.sh` — build and install a custom EDID RPM. Prompts for your EDID `.bin`, layers prerequisites if needed, patches initramfs, and appends the kernel arg.
 - `virtual_display_update.sh` — update the EDID RPM in place. Detects the installed `edid_patch` name from `rpm-ostree status`, prompts for a new EDID `.bin`, rebuilds, and reinstalls.
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
+- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin` and writes `global_prep_cmd` to `~/.config/sunshine.conf`.
 
 ## Requirements
 - Bazzite with `rpm-ostree`
@@ -20,8 +21,10 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display.
 ### Installation
 1) Clone this repo.
 2) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
-3) Run `sudo ./move_sunshine_scripts.sh`. This will move the `sunshine_do.sh` and `sunshine_undo.sh` to `~/.local/bin`. This will also update `~/.config/sunshine.conf` with the following:
-`global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}`
+3) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin` and writes `~/.config/sunshine.conf` with:
+```
+global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
+```
 
 ### Update edid_patch
 1) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.
@@ -30,7 +33,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display.
 1) To remove the EDID patch, run `sudo ./virtual_display_uninstall.sh` and reboot.
 
 ## Example EDID
-The provided example_edid.bin supports various resolutions including 4K@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90Hz, amongst other more standard resolutions.
+The provided example_edid.bin supports various resolutions including 4K@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90Hz, among other common resolutions.
 
 ## Custom EDIDs
 The `samsung-q800t-hdmi2.1` EDID from [v4l-utils](https://git.linuxtv.org/v4l-utils.git/tree/utils/edid-decode/data). Use [Custom Resolution Utility (CRU)](https://customresolutionutility.net/) to add more resolutions to the base EDID and export. CRU works fine under Wine.
