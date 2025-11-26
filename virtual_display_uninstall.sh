@@ -15,6 +15,10 @@ rpm-ostree uninstall "$EDID_PKG"
 echo "=== Removing dracut EDID config ==="
 rm /etc/dracut.conf.d/99-local.conf
 
+echo "=== Removing Sunshine Scripts ==="
+rm ~/.local/bin/sunshine_do.sh
+rm ~/.local/bin/sunshine_undo.sh
+
 echo "=== Detecting EDID kernel arg ==="
 EDID_KARG=$(rpm-ostree kargs | tr ' ' '\n' | grep -m1 'drm.edid_firmware=edid/')
 if [ -z "$EDID_KARG" ]; then

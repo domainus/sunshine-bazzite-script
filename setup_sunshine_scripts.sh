@@ -19,3 +19,11 @@ for script in sunshine_do.sh sunshine_undo.sh; do
 done
 
 echo "Done. Scripts installed to $DEST"
+
+CONFIG="${HOME}/.config/sunshine.conf"
+echo "Writing global_prep_cmd to $CONFIG"
+mkdir -p "$(dirname "$CONFIG")"
+cat > "$CONFIG" <<'EOF'
+global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
+EOF
+echo "sunshine.conf written. Setup complete."
