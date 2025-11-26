@@ -16,8 +16,9 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 
 ### Prerequisite Steps
 1) Clone this repo.
-2) Run `for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n "${con#*/card?-}: "; cat $p; done` to find a list of GPUs' free DP or HDMI output.
-3) Update references in the `virtual_display_setup.sh`, `sunshine_do.sh` and `sunshine_undo.sh` based on the results of the prior command.
+2) Run `ujust setup-sunshine` if not done already. 
+3) Run `for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n "${con#*/card?-}: "; cat $p; done` to find a list of GPUs' free DP or HDMI output.
+4) Update references in the `virtual_display_setup.sh`, `sunshine_do.sh` and `sunshine_undo.sh` based on the results of the prior command.
 
 ### Installation
 1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
