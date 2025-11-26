@@ -21,11 +21,13 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 4) Update references in the `virtual_display_setup.sh`, `sunshine_do.sh` and `sunshine_undo.sh` based on the results of the prior command.
 
 ### Installation
+0) Kill the Sunshine Process
 1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
 2) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin` and writes `~/.config/sunshine.conf` with:
 ```
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
 ```
+3) Restart Sunshine.
 
 ### Update edid_patch
 1) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.

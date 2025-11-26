@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEST="${HOME}/.local/bin"
+TARGET_USER="${SUDO_USER:-$USER}"
+TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
+DEST="${TARGET_HOME}/.local/bin"
+echo "Target user: $TARGET_USER ($TARGET_HOME)"
 echo "Ensuring destination exists: $DEST"
 mkdir -p "$DEST"
 
@@ -20,9 +23,10 @@ done
 
 echo "Done. Scripts installed to $DEST"
 
-CONFIG="${HOME}/.config/sunshine.conf"
+CONFIG_DIR="${TARGET_HOME}/.config/sunshine"
+CONFIG="${CONFIG_DIR}/sunshine.conf"
 echo "Writing global_prep_cmd to $CONFIG"
-mkdir -p "$(dirname "$CONFIG")"
+mkdir -p "$CONFIG_DIR"
 cat > "$CONFIG" <<'EOF'
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
 EOF
