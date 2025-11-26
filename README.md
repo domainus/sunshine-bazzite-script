@@ -17,7 +17,7 @@ Scripts to get an Sunshine setup running on Bazzite with a virtual display.
 3) To remove the EDID patch, run `sudo ./virtual_display_uninstall.sh` and reboot.
 
 ## Example EDID
-The provided example_edid.bin supports various resolutions included 4k@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90hz, amongst other more standard resolutions.
+The provided example_edid.bin supports various resolutions including 4k@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90hz, amongst other more standard resolutions.
 
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
