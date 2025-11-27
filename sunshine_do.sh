@@ -1,5 +1,7 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 # Get params and set any defaults
 width=${1:-3840}
@@ -15,6 +17,8 @@ else
         hdr_args+=( "output.HDMI-A-1.hdr.disable" )
 fi
 
+"${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
+
 kscreen-doctor \
         output.HDMI-A-1.enable \
         output.HDMI-A-1.priority.1 \
@@ -22,5 +26,3 @@ kscreen-doctor \
         "${hdr_args[@]}" \
         output.DP-1.disable \
         output.DP-2.disable
-
-./sunshine_cancel_sleep.sh
