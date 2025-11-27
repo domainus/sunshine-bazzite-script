@@ -29,6 +29,9 @@ global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNS
 ```
 3) Restart Sunshine.
 
+### Optional but HIGHLY RECOMMENDED
+Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only the `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
+
 ### Update edid_patch
 1) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.
 
