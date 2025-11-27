@@ -22,3 +22,5 @@ kscreen-doctor \
         "${hdr_args[@]}" \
         output.DP-1.disable \
         output.DP-2.disable
+
+./sunshine_cancel_sleep.sh
