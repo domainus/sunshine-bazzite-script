@@ -22,7 +22,7 @@ suspend_system() {
     # Only suspend if the PID file still exists (meaning no connection cancelled it)
     if [[ -f "$TIMER_FILE" ]]; then
         echo "[Sunshine Sleep] 60 seconds passed. Suspending now."
-        suspend_system
+        systemctl suspend
     fi
 ) &
 
