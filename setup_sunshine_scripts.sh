@@ -8,7 +8,7 @@ echo "Target user: $TARGET_USER ($TARGET_HOME)"
 echo "Ensuring destination exists: $DEST"
 mkdir -p "$DEST"
 
-for script in sunshine_do.sh sunshine_undo.sh sunshine_sleep sunshine_cancel_sleep; do
+for script in sunshine_do.sh sunshine_undo.sh sunshine_sleep.sh sunshine_cancel_sleep.sh; do
   if [ ! -f "$script" ]; then
     echo "Error: $script not found in current directory. Aborting."
     exit 1
