@@ -60,9 +60,29 @@ gamescope -f -b
     -- %command%
 `
 
+## Steam Big Picture Lag Fix
+```
+From /u/psirrow:
+
+If you're still having the problem (or for anyone else who finds this post), I had the same issue but I solved it by ticking a few more settings. This is what I have:
+
+in "Settings/Display" I have:
+
+    "Disable GPU Blocklist" on
+
+in "Settings/Interface" I have:
+
+    "Enable smooth scrolling in web views" on (may not be necessary)
+
+    "Enable GPU accelerated rendering in web views" on
+
+    "Enable hardware video decoding, if supported" on
+```
+
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
 https://gist.github.com/iamthenuggetman/6d0884954653940596d463a48b2f459c  
 https://www.azdanov.dev/articles/2025/how-to-create-a-virtual-display-for-sunshine-on-arch-linux
 https://www.reddit.com/r/linux_gaming/comments/1h2o0re/comment/mtq730l/
+https://chatgpt.com/c/69273fd1-db30-8325-8cb6-8e881914c7d8
