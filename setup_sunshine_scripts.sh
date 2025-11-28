@@ -4,6 +4,8 @@ set -euo pipefail
 TARGET_USER="${SUDO_USER:-$USER}"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
 DEST="${TARGET_HOME}/.local/bin"
+UNLOCK_SCRIPT="${DEST}/unlock-streamer.sh"
+LOCK_SCRIPT="${DEST}/lock-streamer.sh"
 echo "Target user: $TARGET_USER ($TARGET_HOME)"
 echo "Ensuring destination exists: $DEST"
 mkdir -p "$DEST"
@@ -34,6 +36,29 @@ cat > "$CONFIG" <<'EOF'
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine_undo.sh\""}]
 EOF
 echo "sunshine.conf written."
+
+cat > "$UNLOCK_SCRIPT" <<"SCRIPT"
+#!/usr/bin/env bash
+
+session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
+
+if [[ -n "$session" ]]; then
+    loginctl unlock-session "$session"
+fi
+SCRIPT
+chmod +x "$UNLOCK_SCRIPT"
+
+cat > "$LOCK_SCRIPT" <<"SCRIPT"
+#!/usr/bin/env bash
+
+session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
+
+if [[ -n "$session" ]]; then
+    loginctl lock-session "$session"
+fi
+SCRIPT
+chmod +x "$LOCK_SCRIPT"
+
 
 echo "Applying display wake from sleep fix...."
 cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
