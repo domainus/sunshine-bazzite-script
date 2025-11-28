@@ -61,3 +61,4 @@ systemctl enable sunshine-streamer-logout.service
 
 echo "SAFE configuration complete. No SDDM restart or VT switching is used."
 echo "Logout required for changes to take effect."
+

@@ -88,7 +88,14 @@ in "Settings/Interface" I have:
 2) From this repo, run `sudo ./streamer_autologin.sh`. It stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs/enables two systemd hooks:
    - `sunshine-streamer-login.service`: on `sunshine-session@streamer.service`, flips the `.disabled` autologin file back on and restarts SDDM.
    - `sunshine-streamer-logout.service`: on `sunshine-disconnect@streamer.service`, locks the `streamer` user and re-disables the autologin file.
-
+3) Set proper permissions for the drives using:
+```
+sudo setfacl -R -m u:streamer:rwx /run/media/system/[drive_name_here]
+```
+and to make it default
+```
+sudo setfacl -R -m d:u:streamer:rwx /run/media/system/[drive_name_here]
+```
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
