@@ -7,8 +7,9 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
 - `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, and creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
-- `streamer_autologin.sh` — stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs two systemd hooks: `sunshine-streamer-login.service` (reenables autologin + restarts SDDM on Sunshine session start) and `sunshine-streamer-logout.service` (locks the `streamer` user and re-disables autologin on disconnect).
+- `streamer_autologin.sh` — setups up and enables `unlock-streamer-on-resume.service` (auto-unlock after resume/WoL) and `lock-streamer-on-sunshine-exit.service` (relock on disconnect).
 - `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `sunshine_undo.sh` on login to recover if only the prep ran.
+- `uninstall.sh` — modular uninstaller with flags for the EDID patch, Sunshine helper scripts/wake unit, streamer autologin hooks, and the failsafe service. Supports `--all`, `--dry-run`, and `--target-user`.
 
 ## Requirements
 - Bazzite with `rpm-ostree`
@@ -43,7 +44,8 @@ Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sun
 1) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.
 
 ### Uninstall
-1) To remove the EDID patch, run `sudo ./virtual_display_uninstall.sh` and reboot.
+1) For a modular cleanup (EDID patch, helper scripts/wake unit, autologin hooks, failsafe), run `sudo ./uninstall.sh --all` or pick flags (`--virtual-display`, `--sunshine-scripts`, `--streamer-autologin`, `--failsafe-service`). Use `--dry-run` to preview actions.
+2) Reboot
 
 ## Example EDID
 The provided example_edid.bin supports various resolutions including 4K@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90Hz, among other common resolutions.
@@ -85,10 +87,10 @@ in "Settings/Interface" I have:
 
 ![alt text](imgs/image.png)
 
-2) From this repo, run `sudo ./streamer_autologin.sh`. It stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs/enables two systemd hooks:
-   - `sunshine-streamer-login.service`: on `sunshine-session@streamer.service`, flips the `.disabled` autologin file back on and restarts SDDM.
-   - `sunshine-streamer-logout.service`: on `sunshine-disconnect@streamer.service`, locks the `streamer` user and re-disables the autologin file.
-3) Set proper permissions for the drives using:
+2) From this repo, run `sudo ./streamer_autologin.sh`. It installs/enables:
+   - `unlock-streamer-on-resume.service`: auto-unlocks the `streamer` session when the machine resumes (handy after WOL).
+   - `lock-streamer-on-sunshine-exit.service`: re-locks the `streamer` session when the Sunshine client disconnects.
+3) OPTIONAL: Set proper permissions for the game drives using:
 ```
 sudo setfacl -R -m u:streamer:rwx /run/media/system/[drive_name_here]
 ```
