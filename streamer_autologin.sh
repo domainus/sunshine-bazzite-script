@@ -14,7 +14,7 @@ mkdir -p "$CONFIG_DIR"
 # Write autologin config just once
 cat > "$CONFIG_FILE" <<CONF
 [Autologin]
-User=streamer
+User=
 Session=plasma
 Relogin=true
 
