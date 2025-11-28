@@ -82,6 +82,7 @@ in "Settings/Interface" I have:
 
 ## Creating a "streaming" user that autologins
 1) Type in `users` in start menu and use the GUI to create a standard user. Note: You have to enter a password for this user to be created.
+
 ![alt text](imgs/image.png)
 2) From this repo, run `sudo ./streamer_autologin.sh`. It stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs/enables two systemd hooks:
    - `sunshine-streamer-login.service`: on `sunshine-session@streamer.service`, flips the `.disabled` autologin file back on and restarts SDDM.
