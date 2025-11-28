@@ -93,11 +93,9 @@ in "Settings/Interface" I have:
 3) OPTIONAL: Set proper permissions for the game drives using:
 ```
 sudo setfacl -R -m u:streamer:rwx /run/media/system/[drive_name_here]
-```
-and to make it default
-```
 sudo setfacl -R -m d:u:streamer:rwx /run/media/system/[drive_name_here]
 ```
+
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
