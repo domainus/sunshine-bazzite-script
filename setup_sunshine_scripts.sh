@@ -37,27 +37,7 @@ global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNS
 EOF
 echo "sunshine.conf written."
 
-cat > "$UNLOCK_SCRIPT" <<"SCRIPT"
-#!/usr/bin/env bash
 
-session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
-
-if [[ -n "$session" ]]; then
-    loginctl unlock-session "$session"
-fi
-SCRIPT
-chmod +x "$UNLOCK_SCRIPT"
-
-cat > "$LOCK_SCRIPT" <<"SCRIPT"
-#!/usr/bin/env bash
-
-session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
-
-if [[ -n "$session" ]]; then
-    loginctl lock-session "$session"
-fi
-SCRIPT
-chmod +x "$LOCK_SCRIPT"
 
 
 echo "Applying display wake from sleep fix...."

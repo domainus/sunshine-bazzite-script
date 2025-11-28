@@ -18,7 +18,7 @@ else
 fi
 
 "${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
-"${SCRIPT_DIR}/unlock-streamer.sh"
+
 
 kscreen-doctor \
         output.HDMI-A-1.enable \
