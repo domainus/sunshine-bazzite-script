@@ -5,7 +5,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_setup.sh` — build and install a custom EDID RPM. Prompts for your EDID `.bin`, layers prerequisites if needed, patches initramfs, and appends the kernel arg.
 - `virtual_display_update.sh` — update the EDID RPM in place. Detects the installed `edid_patch` name from `rpm-ostree status`, prompts for a new EDID `.bin`, rebuilds, and reinstalls.
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
-- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin` and writes `global_prep_cmd` to `~/.config/sunshine.conf`.
+- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, and creates/enables a user service (`wake_displays_from_sleep.service`) to run `force-display-wake.sh` after resume.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
 
 ## Requirements
@@ -24,7 +24,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 ### Installation
 0) Kill the Sunshine Process
 1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
-2) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin` and writes `~/.config/sunshine.conf` with:
+2) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, and drops/enables a per-user systemd unit `~/.config/systemd/user/wake_displays_from_sleep.service` that runs `~/.local/bin/force-display-wake.sh` after resume:
 ```
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
 ```
@@ -85,4 +85,3 @@ https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/
 https://gist.github.com/iamthenuggetman/6d0884954653940596d463a48b2f459c  
 https://www.azdanov.dev/articles/2025/how-to-create-a-virtual-display-for-sunshine-on-arch-linux
 https://www.reddit.com/r/linux_gaming/comments/1h2o0re/comment/mtq730l/
-https://chatgpt.com/c/69273fd1-db30-8325-8cb6-8e881914c7d8
