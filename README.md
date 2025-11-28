@@ -87,9 +87,10 @@ in "Settings/Interface" I have:
 
 ![alt text](imgs/image.png)
 
-2) From this repo, run `sudo ./streamer_autologin.sh`. It installs/enables:
-   - `unlock-streamer-on-resume.service`: auto-unlocks the `streamer` session when the machine resumes (handy after WOL).
-   - `lock-streamer-on-sunshine-exit.service`: re-locks the `streamer` session when the Sunshine client disconnects.
+2) In System Settings > Screen Locking for the streamer user, make sure it looks like the following: 
+
+![alt text](image2.png)
+
 3) OPTIONAL: Set proper permissions for the game drives using:
 ```
 sudo setfacl -R -m u:streamer:rwx /run/media/system/[drive_name_here]
