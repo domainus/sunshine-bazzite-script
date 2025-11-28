@@ -47,7 +47,7 @@ Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sun
 The provided example_edid.bin supports various resolutions including 4K@60, 2420x1668@120Hz (iPad Pro), and 1280x800@90Hz, among other common resolutions.
 
 ## Custom EDIDs
-The `samsung-q800t-hdmi2.1` EDID from [v4l-utils](https://git.linuxtv.org/v4l-utils.git/tree/utils/edid-decode/data). Use [Custom Resolution Utility (CRU)](https://customresolutionutility.net/) to add more resolutions to the base EDID and export. CRU works fine under Wine.
+It is recommended to use the `samsung-q800t-hdmi2.1` EDID from [v4l-utils](https://git.linuxtv.org/v4l-utils.git/tree/utils/edid-decode/data). Use [Custom Resolution Utility (CRU)](https://customresolutionutility.net/) to add more resolutions to the base EDID and export. CRU works fine under Wine.
 
 ## Default Steam Launch Commands
 `LD_PRELOAD=""
@@ -61,9 +61,8 @@ gamescope -f -b
 `
 
 ## Steam Big Picture Lag Fix
-```
 From /u/psirrow:
-
+```
 If you're still having the problem (or for anyone else who finds this post), I had the same issue but I solved it by ticking a few more settings. This is what I have:
 
 in "Settings/Display" I have:
