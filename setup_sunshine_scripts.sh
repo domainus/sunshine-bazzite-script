@@ -40,7 +40,7 @@ cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
 echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
 sudo chmod +x ${TARGET_HOME}/.local/bin/force_display_wake.sh
 echo "force_display_wake.sh marked executable."
-mkdir -p ${TARGET_HOME}/.config/systemd/user
+mkdir -p "${TARGET_HOME}/.config/systemd/user"
 echo "Creating wake_displays_from_sleep.service..."
 cat > "${TARGET_HOME}/.config/systemd/user/wake_displays_from_sleep.service" <<'EOF'
 [Unit]
@@ -48,7 +48,7 @@ Description=Force monitors to wake after resume
 
 [Service]
 Type=oneshot
-ExecStart=%h/.local/bin/force-display-wake.sh
+ExecStart=%h/.local/bin/force_display_wake.sh
 
 [Install]
 WantedBy=systemd-user-sessions.service
