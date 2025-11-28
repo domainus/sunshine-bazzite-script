@@ -28,6 +28,8 @@ run_user_systemctl() {
 cat > "$UNLOCK_SCRIPT" <<"SCRIPT"
 #!/usr/bin/env bash
 
+sleep 3
+
 session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
 
 if [[ -n "$session" ]]; then
@@ -38,6 +40,8 @@ chmod +x "$UNLOCK_SCRIPT"
 
 cat > "$LOCK_SCRIPT" <<"SCRIPT"
 #!/usr/bin/env bash
+
+sleep 3
 
 session=$(loginctl list-sessions | awk '$1 ~ /^[0-9]+$/ && $3=="streamer" {print $1}')
 
