@@ -74,11 +74,11 @@ ExecStart=/usr/local/bin/lock-streamer.sh
 WantedBy=sunshine.service
 SERVICE"
 
-systemctl --user daemon-reload
-systemctl --user enable unlock-on-sunshine.service
-systemctl --user enable lock-on-sunshine-exit.service
+run_user_systemctl daemon-reload
+run_user_systemctl enable unlock-on-sunshine.service
+run_user_systemctl enable lock-on-sunshine-exit.service
 
-systemctl --user add-wants sunshine.service unlock-on-sunshine.service
-systemctl --user add-wants sunshine.service lock-on-sunshine-exit.service
+run_user_systemctl add-wants sunshine.service unlock-on-sunshine.service
+run_user_systemctl add-wants sunshine.service lock-on-sunshine-exit.service
 
 echo "User-level Sunshine lock/unlock units enabled for $STREAMER_USER."
