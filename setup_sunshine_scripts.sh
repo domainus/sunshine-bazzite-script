@@ -36,7 +36,7 @@ EOF
 echo "sunshine.conf written."
 
 echo "Applying display wake from sleep fix...."
-mv force_display_wake.sh ${TARGET_HOME}/.local/bin/
+cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
 echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
 sudo chmod +x ${TARGET_HOME}/.local/bin/force_display_wake.sh
 echo "force_display_wake.sh marked executable."
