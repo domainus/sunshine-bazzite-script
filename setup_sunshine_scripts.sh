@@ -38,7 +38,7 @@ echo "sunshine.conf written."
 echo "Applying display wake from sleep fix...."
 cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
 echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
-sudo chmod +x ${TARGET_HOME}/.local/bin/force_display_wake.sh
+chmod +x ${TARGET_HOME}/.local/bin/force_display_wake.sh
 echo "force_display_wake.sh marked executable."
 mkdir -p "${TARGET_HOME}/.config/systemd/user"
 echo "Creating wake_displays_from_sleep.service..."
