@@ -78,6 +78,11 @@ in "Settings/Interface" I have:
     "Enable hardware video decoding, if supported" on
 ```
 
+## Creating a "streaming" user that autologins
+1) Type in users in Bazzite and use the GUI to create a standard user. Note: You have to enter a password this user to be created.
+![alt text](imgs/image.png)
+2) 
+
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
