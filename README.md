@@ -7,6 +7,8 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
 - `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, and creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
+- `streamer_autologin.sh` — stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs two systemd hooks: `sunshine-streamer-login.service` (reenables autologin + restarts SDDM on Sunshine session start) and `sunshine-streamer-logout.service` (locks the `streamer` user and re-disables autologin on disconnect).
+- `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `sunshine_undo.sh` on login to recover if only the prep ran.
 
 ## Requirements
 - Bazzite with `rpm-ostree`
@@ -81,7 +83,9 @@ in "Settings/Interface" I have:
 ## Creating a "streaming" user that autologins
 1) Type in users in Bazzite and use the GUI to create a standard user. Note: You have to enter a password this user to be created.
 ![alt text](imgs/image.png)
-2) Run `sudo streamer_autologin.sh`.
+2) From this repo, run `sudo ./streamer_autologin.sh`. It stages `/etc/sddm.conf.d/50-streamer-autologin.conf.disabled` and installs/enables two systemd hooks:
+   - `sunshine-streamer-login.service`: on `sunshine-session@streamer.service`, flips the `.disabled` autologin file back on and restarts SDDM.
+   - `sunshine-streamer-logout.service`: on `sunshine-disconnect@streamer.service`, locks the `streamer` user and re-disables the autologin file.
 
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
