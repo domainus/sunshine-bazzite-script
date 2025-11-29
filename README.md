@@ -82,21 +82,6 @@ in "Settings/Interface" I have:
     "Enable hardware video decoding, if supported" on
 ```
 
-## Creating a "streaming" user that autologins
-1) Type in `users` in start menu and use the GUI to create a standard user. Note: You have to enter a password for this user to be created.
-
-![alt text](imgs/image.png)
-
-2) In System Settings > Screen Locking for the streamer user, make sure it looks like the following: 
-
-![alt text](image2.png)
-
-3) OPTIONAL: Set proper permissions for the game drives using:
-```
-sudo setfacl -R -m u:streamer:rwx /run/media/system/[drive_name_here]
-sudo setfacl -R -m d:u:streamer:rwx /run/media/system/[drive_name_here]
-```
-
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  
 /u/Acru_Jovian  
