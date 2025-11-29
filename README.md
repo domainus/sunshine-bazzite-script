@@ -26,7 +26,13 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 
 ### Installation
 0) Kill the Sunshine Process
-1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots. Then follow the auto-unlock step below.
+1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots. Then follow the auto-unlock step below. 
+
+NOTE: If you do not want auto-unlock then remove the following lines from `sunshine_do.sh`:
+```
+"${SCRIPT_DIR}/unlock_on_connect.sh"
+```
+
 2) Run `./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, drops/enables a per-user systemd unit `~/.config/systemd/user/wake_displays_from_sleep.service` that runs `~/.local/bin/force_display_wake.sh` after resume, and installs `~/.local/bin/unlock_on_connect.sh` plus a sudoers entry that lets `loginctl unlock-session` run without a password:
 ```
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine_undo.sh\""}]
