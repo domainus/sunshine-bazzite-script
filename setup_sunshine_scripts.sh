@@ -4,8 +4,7 @@ set -euo pipefail
 TARGET_USER="${SUDO_USER:-$USER}"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
 DEST="${TARGET_HOME}/.local/bin"
-UNLOCK_SCRIPT="${DEST}/unlock-streamer.sh"
-LOCK_SCRIPT="${DEST}/lock-streamer.sh"
+
 echo "Target user: $TARGET_USER ($TARGET_HOME)"
 echo "Ensuring destination exists: $DEST"
 mkdir -p "$DEST"
@@ -37,9 +36,6 @@ global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNS
 EOF
 echo "sunshine.conf written."
 
-
-
-
 echo "Applying display wake from sleep fix...."
 cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
 echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
@@ -68,4 +64,16 @@ echo "Reloading user systemd units..."
 systemctl --user daemon-reload
 echo "Enabling wake_displays_from_sleep.service..."
 systemctl --user enable wake_displays_from_sleep.service
-echo "Display wake service enabled. Setup complete."
+echo "Display wake service enabled."
+
+unlock_script="$DEST/unlock_on_connect.sh"
+
+  echo "Creating unlock script at $unlock_script..."
+  cat >"$unlock_script" <<EOF
+#!/usr/bin/env bash
+# Unlocks the ${TARGET_USER} session when Sunshine client connects
+/usr/bin/loginctl unlock-user ${TARGET_USER}
+EOF
+  chmod +x "$unlock_script"
+
+echo "Unlock script enabled. Setup complete."
