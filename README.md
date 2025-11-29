@@ -7,8 +7,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
 - `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume, and drops an `unlock_on_connect.sh` helper that unlocks the session for user `ryan` via `loginctl unlock-session`.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
-- `streamer_autologin.sh` — setups up and enables `unlock-streamer-on-resume.service` (auto-unlock after resume/WoL) and `lock-streamer-on-sunshine-exit.service` (relock on disconnect).
-- `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `sunshine_undo.sh` on login to recover if only the prep ran.
+- `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `fix_displays.sh` on login to recover if only the prep ran.
 - `uninstall.sh` — modular uninstaller with flags for the EDID patch, Sunshine helper scripts/wake unit, streamer autologin hooks, and the failsafe service. Supports `--all`, `--dry-run`, and `--target-user`.
 
 ## Requirements

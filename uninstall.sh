@@ -171,6 +171,7 @@ remove_sunshine_scripts() {
     "sunshine_sleep.sh"
     "sunshine_cancel_sleep.sh"
     "force_display_wake.sh"
+    "unlock_on_connect.sh"
   )
   for f in "${files[@]}"; do
     if [[ -f "$dest/$f" ]]; then
@@ -193,6 +194,14 @@ remove_sunshine_scripts() {
     run_cmd "rm -f \"$wake_unit\""
   else
     echo "Missing: $wake_unit (skipping)"
+  fi
+
+  local sudoers_file="/etc/sudoers.d/sunshine-loginctl"
+  if [[ -f "$sudoers_file" ]]; then
+    echo "Removing sudoers drop-in $sudoers_file"
+    run_cmd "rm -f \"$sudoers_file\""
+  else
+    echo "Sudoers drop-in not present; skipping."
   fi
 }
 
