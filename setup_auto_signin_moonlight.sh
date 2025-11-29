@@ -29,6 +29,7 @@ create_unlock_script() {
   cat >"$unlock_script" <<EOF
 #!/usr/bin/env bash
 # Unlocks the ${TARGET_USER} session when Sunshine client connects
+sleep 3
 /usr/bin/loginctl unlock-user ${TARGET_USER}
 EOF
   chmod +x "$unlock_script"

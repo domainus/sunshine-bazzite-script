@@ -18,6 +18,7 @@ else
 fi
 
 "${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
+
 "${SCRIPT_DIR}/unlock_on_connect.sh"
 
 kscreen-doctor \
@@ -27,3 +28,4 @@ kscreen-doctor \
         "${hdr_args[@]}" \
         output.DP-1.disable \
         output.DP-2.disable
+

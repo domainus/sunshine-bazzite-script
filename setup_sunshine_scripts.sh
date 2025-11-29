@@ -11,7 +11,7 @@ mkdir -p "$DEST"
 echo "Destination ready."
 
 echo "Verifying and copying Sunshine scripts..."
-for script in sunshine_do.sh sunshine_undo.sh sunshine_sleep.sh sunshine_cancel_sleep.sh; do
+for script in sunshine_do.sh sunshine_undo.sh sunshine_sleep.sh sunshine_cancel_sleep.sh fix_displays.sh; do
   if [ ! -f "$script" ]; then
     echo "Error: $script not found in current directory. Aborting."
     exit 1
@@ -68,12 +68,18 @@ echo "Display wake service enabled."
 
 unlock_script="$DEST/unlock_on_connect.sh"
 
-  echo "Creating unlock script at $unlock_script..."
-  cat >"$unlock_script" <<EOF
+echo "Creating unlock script at $unlock_script..."
+cat >"$unlock_script" <<'EOF'
 #!/usr/bin/env bash
-# Unlocks the ${TARGET_USER} session when Sunshine client connects
-/usr/bin/loginctl unlock-user ${TARGET_USER}
+sleep 3
+# Unlocks the session for user ryan when Sunshine client connects
+SESSION_ID="$(loginctl list-sessions --no-legend --no-pager | awk '$3=="ryan" {print $1; exit}')"
+if [ -z "$SESSION_ID" ]; then
+  echo "No active session found for user ryan" >&2
+  exit 1
+fi
+/usr/bin/loginctl unlock-session "$SESSION_ID"
 EOF
-  chmod +x "$unlock_script"
+chmod +x "$unlock_script"
 
 echo "Unlock script enabled. Setup complete."

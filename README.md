@@ -5,7 +5,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_setup.sh` — build and install a custom EDID RPM. Prompts for your EDID `.bin`, layers prerequisites if needed, patches initramfs, and appends the kernel arg.
 - `virtual_display_update.sh` — update the EDID RPM in place. Detects the installed `edid_patch` name from `rpm-ostree status`, prompts for a new EDID `.bin`, rebuilds, and reinstalls.
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
-- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, and creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume.
+- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume, and drops an `unlock_on_connect.sh` helper that unlocks the session for user `ryan` via `loginctl unlock-session`.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
 - `streamer_autologin.sh` — setups up and enables `unlock-streamer-on-resume.service` (auto-unlock after resume/WoL) and `lock-streamer-on-sunshine-exit.service` (relock on disconnect).
 - `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `sunshine_undo.sh` on login to recover if only the prep ran.
@@ -26,11 +26,12 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 
 ### Installation
 0) Kill the Sunshine Process
-1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots.
-2) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, and drops/enables a per-user systemd unit `~/.config/systemd/user/wake_displays_from_sleep.service` that runs `~/.local/bin/force_display_wake.sh` after resume:
+1) Run `sudo ./virtual_display_setup.sh` and supply your EDID `.bin` path when prompted. The script builds/installs `edid_patch`, updates initramfs, and appends the kernel arg, then reboots. Then follow the auto-unlock step below.
+2) Run `./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, drops/enables a per-user systemd unit `~/.config/systemd/user/wake_displays_from_sleep.service` that runs `~/.local/bin/force_display_wake.sh` after resume, and installs `~/.local/bin/unlock_on_connect.sh` plus a sudoers entry that lets `loginctl unlock-session` run without a password:
 ```
-global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine-do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine-undo.sh\""}]
+global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine_undo.sh\""}]
 ```
+   The unlock helper targets the `ryan` session; edit `setup_sunshine_scripts.sh` (or the installed `~/.local/bin/unlock_on_connect.sh`) if you need a different user.
 3) Restart Sunshine.
 
 Notes:
@@ -38,7 +39,7 @@ Notes:
 - If you run them directly from the repo, ensure they are executable (`chmod +x sunshine_sleep.sh sunshine_cancel_sleep.sh`). The setup script handles this for the installed copies.
 
 ### Optional but HIGHLY RECOMMENDED
-Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only the `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
+Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only te `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
 
 ### Update edid_patch
 1) To swap to a new EDID later, run `sudo ./virtual_display_update.sh`, provide the new `.bin`, and reboot when prompted.
@@ -81,6 +82,9 @@ in "Settings/Interface" I have:
 
     "Enable hardware video decoding, if supported" on
 ```
+
+## Auto Unlock when connecting to Sunshine ONLY
+`setup_sunshine_scripts.sh` now installs `~/.local/bin/unlock_on_connect.sh`, which finds the active session for user `ryan` and runs `loginctl unlock-session <id>` using a sudoers drop-in (`/etc/sudoers.d/sunshine-loginctl`). Run the setup script with `sudo` so it can write the sudoers file. If your Sunshine user is not `ryan`, change the username in the script (or the installed unlock helper) before running it.
 
 ## Credits
 https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/  

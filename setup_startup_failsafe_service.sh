@@ -2,7 +2,7 @@
 
 # ===== CONFIG =====
 SERVICE_NAME="failsafe_displays"
-SCRIPT_PATH="$HOME/.local/bin/sunshine_undo.sh"
+SCRIPT_PATH="$HOME/.local/bin/fix_displays.sh"
 SERVICE_PATH="$HOME/.config/systemd/user/${SERVICE_NAME}.service"
 
 # ===== CREATE TARGET DIRECTORIES =====
