@@ -7,10 +7,6 @@ sleep 1
 kscreen-doctor output.DP-1.enable
 kscreen-doctor output.DP-2.enable
 
-# Switch VTs to force GPU redraw
-chvt 3
-sleep 0.3
-chvt 1
 
 # 2. Toggle DPMS to ensure displays get a proper signal
 kscreen-doctor output.DP-1.dpms.off
@@ -22,3 +18,13 @@ kscreen-doctor output.DP-2.dpms.on
 # OPTION: if you have specific monitors you want re-applied:
 # kscreen-doctor output.HDMI-A-1.enable
 # kscreen-doctor output.DisplayPort-0.enable
+
+# Force the kernel to re-detect displays
+
+for card in /sys/class/drm/card*/; do
+    echo detect > "$card/device/drm/card0-HDMI-A-1/status" 2>/dev/null
+    echo detect > "$card/device/drm/card0-DP-1/status" 2>/dev/null
+done
+
+# Fallback: trigger a general DRM event
+udevadm trigger --subsystem-match=drm
