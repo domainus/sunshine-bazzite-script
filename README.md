@@ -8,6 +8,8 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume, and drops an `unlock_on_connect.sh` helper that unlocks the session for user `ryan` via `loginctl unlock-session`.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
 - `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `fix_displays.sh` on login to recover if only the prep ran.
+- `wake_on_lan_fix_nvidia.sh` — installs a systemd resume hook (`nvidia-display-wake.service`) that wakes NVIDIA displays after suspend. Supports `--mode=loginctl|xset|kscreen`.
+- `uninstall_wake_on_lan_fix_nvidia.sh` — removes the `nvidia-display-wake.service` resume hook.
 - `uninstall.sh` — modular uninstaller with flags for the EDID patch, Sunshine helper scripts/wake unit, streamer autologin hooks, and the failsafe service. Supports `--all`, `--dry-run`, and `--target-user`.
 
 ## Requirements
