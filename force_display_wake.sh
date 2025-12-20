@@ -1,30 +1,44 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Wait a moment for GPU to initialize
-sleep 1
+log() { echo "[force_display_wake] $*"; }
 
-# 1. Force DPMS on all outputs
-kscreen-doctor output.DP-1.enable
-kscreen-doctor output.DP-2.enable
+# Give NVIDIA + compositor a moment after resume
+sleep 2
 
+# Force all DP/HDMI connectors ON, then return to DETECT.
+# This is more reliable than kscreen-doctor on buggy resume paths.
+shopt -s nullglob
+connectors=(/sys/class/drm/card*-DP-*/force /sys/class/drm/card*-HDMI-*/force)
 
-# 2. Toggle DPMS to ensure displays get a proper signal
-kscreen-doctor output.DP-1.dpms.off
-kscreen-doctor output.DP-2.dpms.off
-sleep 0.5
-kscreen-doctor output.DP-1.dpms.on
-kscreen-doctor output.DP-2.dpms.on
+if ((${#connectors[@]} == 0)); then
+  log "No DRM connector force files found under /sys/class/drm. Exiting."
+  exit 0
+fi
 
-# OPTION: if you have specific monitors you want re-applied:
-# kscreen-doctor output.HDMI-A-1.enable
-# kscreen-doctor output.DisplayPort-0.enable
-
-# Force the kernel to re-detect displays
-
-for card in /sys/class/drm/card*/; do
-    echo detect > "$card/device/drm/card0-HDMI-A-1/status" 2>/dev/null
-    echo detect > "$card/device/drm/card0-DP-1/status" 2>/dev/null
+log "Forcing connectors ON..."
+for f in "${connectors[@]}"; do
+  echo on > "$f" 2>/dev/null || true
 done
 
-# Fallback: trigger a general DRM event
-udevadm trigger --subsystem-match=drm
+sleep 1
+
+log "Returning connectors to DETECT..."
+for f in "${connectors[@]}"; do
+  echo detect > "$f" 2>/dev/null || true
+done
+
+# Trigger DRM udev events (harmless, sometimes helps)
+udevadm trigger --subsystem-match=drm >/dev/null 2>&1 || true
+
+# Last resort: VT flip forces a modeset on many NVIDIA systems.
+if command -v chvt >/dev/null 2>&1; then
+  log "VT flip (1 -> 2 -> 1) ..."
+  chvt 1 2>/dev/null || true
+  sleep 0.2
+  chvt 2 2>/dev/null || true
+  sleep 0.2
+  chvt 1 2>/dev/null || true
+fi
+
+log "Done."

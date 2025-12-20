@@ -163,7 +163,7 @@ remove_virtual_display() {
 }
 
 remove_sunshine_scripts() {
-  echo "=== Removing Sunshine helper scripts and wake service (user) ==="
+  echo "=== Removing Sunshine helper scripts and wake hooks ==="
   local dest="${TARGET_HOME}/.local/bin"
   local files=(
     "sunshine_do.sh"
@@ -194,6 +194,20 @@ remove_sunshine_scripts() {
     run_cmd "rm -f \"$wake_unit\""
   else
     echo "Missing: $wake_unit (skipping)"
+  fi
+
+  local system_wake="/etc/systemd/system-sleep/99-force-display-wake"
+  if [[ -f "$system_wake" ]]; then
+    run_cmd "rm -f \"$system_wake\""
+  else
+    echo "Missing: $system_wake (skipping)"
+  fi
+
+  local system_script="/usr/local/bin/force_display_wake.sh"
+  if [[ -f "$system_script" ]]; then
+    run_cmd "rm -f \"$system_script\""
+  else
+    echo "Missing: $system_script (skipping)"
   fi
 
   local sudoers_file="/etc/sudoers.d/sunshine-loginctl"

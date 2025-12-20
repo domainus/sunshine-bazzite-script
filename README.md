@@ -5,7 +5,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `virtual_display_setup.sh` — build and install a custom EDID RPM. Prompts for your EDID `.bin`, layers prerequisites if needed, patches initramfs, and appends the kernel arg.
 - `virtual_display_update.sh` — update the EDID RPM in place. Detects the installed `edid_patch` name from `rpm-ostree status`, prompts for a new EDID `.bin`, rebuilds, and reinstalls.
 - `virtual_display_uninstall.sh` — remove the EDID patch. Detects/removes the `edid_patch` RPM, deletes the dracut config, removes any `drm.edid_firmware=edid/...` karg, disables the custom initramfs, and reboots.
-- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, creates/enables a user service (`wake_displays_from_sleep.service`) to run `force_display_wake.sh` after resume, and drops an `unlock_on_connect.sh` helper that unlocks the session for user `ryan` via `loginctl unlock-session`.
+- `setup_sunshine_scripts.sh` — installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `global_prep_cmd` to `~/.config/sunshine.conf`, installs a systemd sleep hook that runs `/usr/local/bin/force_display_wake.sh` after resume, and drops an `unlock_on_connect.sh` helper that unlocks the session for user `ryan` via `loginctl unlock-session`.
 - `sunshine_sleep.sh` / `sunshine_cancel_sleep.sh` — start/stop a per-user 60s suspend timer without sudo. Called by the prep/undo scripts.
 - `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `fix_displays.sh` on login to recover if only the prep ran.
 - `wake_on_lan_fix_nvidia.sh` — installs a systemd resume hook (`nvidia-display-wake.service`) that wakes NVIDIA displays after suspend. Supports `--mode=loginctl|xset|kscreen`.
@@ -23,7 +23,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 1) Clone this repo.
 2) Run `ujust setup-sunshine` if not done already. 
 3) Run `for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n "${con#*/card?-}: "; cat $p; done` to find a list of GPUs' free DP or HDMI output.
-4) Edit connector names to match your hardware: in `virtual_display_setup.sh` replace `HDMI-A-1` in the `drm.edid_firmware` arg with the target output, in `sunshine_do.sh`/`sunshine_undo.sh`, and in `force_display_wake.sh` replace the default `HDMI-A-1`, `DP-1`, and `DP-2` connector names with the ones you found in step 3.
+4) Edit connector names to match your hardware: in `virtual_display_setup.sh` replace `HDMI-A-1` in the `drm.edid_firmware` arg with the target output, and in `sunshine_do.sh`/`sunshine_undo.sh` replace the default `HDMI-A-1` connector name with the one you found in step 3.
 
 ### Installation
 0) Kill the Sunshine Process
@@ -34,7 +34,7 @@ NOTE: If you do not want auto-unlock then remove the following lines from `sunsh
 "${SCRIPT_DIR}/unlock_on_connect.sh"
 ```
 
-2) Run `./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, drops/enables a per-user systemd unit `~/.config/systemd/user/wake_displays_from_sleep.service` that runs `~/.local/bin/force_display_wake.sh` after resume, and installs `~/.local/bin/unlock_on_connect.sh` plus a sudoers entry that lets `loginctl unlock-session` run without a password:
+2) Run `sudo ./setup_sunshine_scripts.sh`. This installs the Sunshine prep/cleanup scripts to `~/.local/bin`, writes `~/.config/sunshine.conf`, installs `/usr/local/bin/force_display_wake.sh` plus a systemd sleep hook at `/etc/systemd/system-sleep/99-force-display-wake` to run it after resume, and installs `~/.local/bin/unlock_on_connect.sh` plus a sudoers entry that lets `loginctl unlock-session` run without a password:
 ```
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine_undo.sh\""}]
 ```

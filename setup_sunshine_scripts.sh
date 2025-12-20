@@ -37,34 +37,30 @@ EOF
 echo "sunshine.conf written."
 
 echo "Applying display wake from sleep fix...."
-cp force_display_wake.sh ${TARGET_HOME}/.local/bin/
+cp force_display_wake.sh "${TARGET_HOME}/.local/bin/"
 echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
-chmod +x ${TARGET_HOME}/.local/bin/force_display_wake.sh
+chmod +x "${TARGET_HOME}/.local/bin/force_display_wake.sh"
 echo "force_display_wake.sh marked executable."
-mkdir -p "${TARGET_HOME}/.config/systemd/user"
-echo "Creating wake_displays_from_sleep.service..."
-cat > "${TARGET_HOME}/.config/systemd/user/wake_displays_from_sleep.service" <<'EOF'
-[Unit]
-Description=Force monitors to wake after resume
 
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/force_display_wake.sh
-
-[Install]
-WantedBy=systemd-user-sessions.service
-WantedBy=graphical-session.target
-WantedBy=gnome-session.target
-WantedBy=plasma-session.target
-WantedBy=suspend.target
+if [[ $EUID -ne 0 ]]; then
+  echo "Not running as root; skipping system-sleep hook install."
+  echo "Re-run with sudo to install /usr/local/bin/force_display_wake.sh and /etc/systemd/system-sleep/99-force-display-wake."
+else
+  echo "Installing force_display_wake.sh to /usr/local/bin..."
+  cp force_display_wake.sh /usr/local/bin/force_display_wake.sh
+  chmod +x /usr/local/bin/force_display_wake.sh
+  echo "Creating systemd sleep hook..."
+  cat > /etc/systemd/system-sleep/99-force-display-wake <<'EOF'
+#!/usr/bin/env bash
+case "$1" in
+  post)
+    /usr/local/bin/force_display_wake.sh
+    ;;
+esac
 EOF
-echo "wake_displays_from_sleep.service written to ${TARGET_HOME}/.config/systemd/user/."
-
-echo "Reloading user systemd units..."
-systemctl --user daemon-reload
-echo "Enabling wake_displays_from_sleep.service..."
-systemctl --user enable wake_displays_from_sleep.service
-echo "Display wake service enabled."
+  chmod +x /etc/systemd/system-sleep/99-force-display-wake
+  echo "System sleep hook installed."
+fi
 
 unlock_script="$DEST/unlock_on_connect.sh"
 
