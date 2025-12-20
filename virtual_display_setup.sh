@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+prompt_reboot() {
+  echo
+  read -rn1 -p "Press 'r' to reboot now, or any other key to exit: " REBOOT_KEY
+  echo
+  if [ "$REBOOT_KEY" = "r" ]; then
+    echo "Rebooting..."
+    systemctl reboot
+  else
+    echo "Reboot skipped."
+  fi
+}
+
 echo "=== Checking prerequisites ==="
 missing_pkgs=()
 for pkg in ruby-devel rubygems rpm-build; do
@@ -11,8 +23,9 @@ done
 if [ "${#missing_pkgs[@]}" -gt 0 ]; then
   echo "Layering missing packages (${missing_pkgs[*]}) via rpm-ostree (requires reboot)..."
   rpm-ostree install "${missing_pkgs[@]}"
-  echo "Rebooting to apply layered packages..."
-  systemctl reboot
+  echo "Reboot required to apply layered packages."
+  prompt_reboot
+  exit 0
 else
   echo "All prerequisite RPM packages already installed; skipping rpm-ostree install."
 fi
@@ -44,4 +57,4 @@ rpm-ostree initramfs --enable
 echo "=== Add kernel argument and reboot ==="
 rpm-ostree kargs --append="drm.edid_firmware=HDMI-A-1:edid/$EDID_NAME"
 echo "[Optional] You can specify a specific output port such as HDMI-A-1:edid/$EDID_NAME"
-systemctl reboot
+prompt_reboot

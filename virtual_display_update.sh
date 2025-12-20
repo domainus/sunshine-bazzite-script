@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+prompt_reboot() {
+  echo
+  read -rn1 -p "Press 'r' to reboot now, or any other key to exit: " REBOOT_KEY
+  echo
+  if [ "$REBOOT_KEY" = "r" ]; then
+    echo "Rebooting..."
+    systemctl reboot
+  else
+    echo "Reboot skipped."
+  fi
+}
+
 echo "=== Detecting installed edid_patch RPM ==="
 EDID_PKG=$(rpm-ostree status | awk '/edid_patch/ { for (i = 1; i <= NF; i++) if ($i ~ /^edid_patch/) { print $i; exit } }')
 if [ -z "$EDID_PKG" ]; then
@@ -30,5 +42,5 @@ echo "Building new edid_patch RPM with fpm..."
 fpm -s dir -t rpm -n edid_patch .
 echo "Installing new edid_patch RPM..."
 rpm-ostree install "$EDID_RPM"
-echo "Rebooting to apply updated EDID..."
-systemctl reboot
+echo "Reboot required to apply updated EDID."
+prompt_reboot
