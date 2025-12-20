@@ -42,24 +42,31 @@ echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
 chmod +x "${TARGET_HOME}/.local/bin/force_display_wake.sh"
 echo "force_display_wake.sh marked executable."
 
-if [[ $EUID -ne 0 ]]; then
-  echo "Not running as root; skipping system-sleep hook install."
-  echo "Re-run with sudo to install /usr/local/bin/force_display_wake.sh and /etc/systemd/system-sleep/99-force-display-wake."
-else
-  echo "Installing force_display_wake.sh to /usr/local/bin..."
-  cp force_display_wake.sh /usr/local/bin/force_display_wake.sh
-  chmod +x /usr/local/bin/force_display_wake.sh
-  echo "Creating systemd sleep hook..."
-  cat > /etc/systemd/system-sleep/99-force-display-wake <<'EOF'
-#!/usr/bin/env bash
-case "$1" in
-  post)
-    /usr/local/bin/force_display_wake.sh
-    ;;
-esac
+USER_SYSTEMD_DIR="${TARGET_HOME}/.config/systemd/user"
+WAKE_UNIT="${USER_SYSTEMD_DIR}/wake_displays_from_sleep.service"
+
+echo "Creating user resume hook at ${WAKE_UNIT}..."
+mkdir -p "${USER_SYSTEMD_DIR}"
+cat > "${WAKE_UNIT}" <<'EOF'
+[Unit]
+Description=Wake displays after resume
+After=suspend.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/force_display_wake.sh
+
+[Install]
+WantedBy=suspend.target
 EOF
-  chmod +x /etc/systemd/system-sleep/99-force-display-wake
-  echo "System sleep hook installed."
+
+echo "Enabling user resume hook..."
+if [[ $EUID -eq 0 ]]; then
+  sudo -u "${TARGET_USER}" systemctl --user daemon-reload
+  sudo -u "${TARGET_USER}" systemctl --user enable --now wake_displays_from_sleep.service || true
+else
+  systemctl --user daemon-reload
+  systemctl --user enable --now wake_displays_from_sleep.service || true
 fi
 
 unlock_script="$DEST/unlock_on_connect.sh"
