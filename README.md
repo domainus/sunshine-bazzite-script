@@ -38,12 +38,13 @@ NOTE: If you do not want auto-unlock then remove the following lines from `sunsh
 ```
 global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNSHINE_CLIENT_WIDTH}\\\" \\\"${SUNSHINE_CLIENT_HEIGHT}\\\" \\\"${SUNSHINE_CLIENT_FPS}\\\" \\\"${SUNSHINE_CLIENT_HDR}\\\"\"","undo":"bash -c \"${HOME}/.local/bin/sunshine_undo.sh\""}]
 ```
-   The unlock helper targets the `ryan` session; edit `setup_sunshine_scripts.sh` (or the installed `~/.local/bin/unlock_on_connect.sh`) if you need a different user.
+   The unlock helper targets the user session; edit `setup_sunshine_scripts.sh` (or the installed `~/.local/bin/unlock_on_connect.sh`) if you need a different user.
 3) Restart Sunshine.
 
 Notes:
 - The sleep helper scripts do not need sudo. They use per-user state under `${XDG_RUNTIME_DIR:-/tmp}` and `loginctl`/`systemctl` to suspend.
 - If you run them directly from the repo, ensure they are executable (`chmod +x sunshine_sleep.sh sunshine_cancel_sleep.sh`). The setup script handles this for the installed copies.
+- If you hit Wake on LAN issues on NVIDIA, try: `sudo rpm-ostree kargs --append-if-missing=mem_sleep_default=s2idle`.
 
 ### Optional but HIGHLY RECOMMENDED
 Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only te `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
