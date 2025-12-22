@@ -47,8 +47,10 @@ cp "$EDID_BIN" ~/edid_patch/usr/lib/firmware/edid/"$EDID_NAME"
 cd ~/edid_patch
 echo "Building edid_patch RPM with fpm..."
 fpm -s dir -t rpm -n edid_patch .
+echo "Resetting development layered patches before installing"
+rpm-ostree reset
 echo "Installing generated RPM (update name if it differs)..."
-rpm-ostree install edid_patch-1.0-1.x86_64.rpm
+rpm-ostree install $EDID_NAME
 
 echo "=== Update initramfs with custom EDID ==="
 echo "install_items+=\" /usr/lib/firmware/edid/$EDID_NAME \"" | sudo tee /etc/dracut.conf.d/99-local.conf
@@ -56,5 +58,6 @@ rpm-ostree initramfs --enable
 
 echo "=== Add kernel argument and reboot ==="
 rpm-ostree kargs --append="drm.edid_firmware=HDMI-A-1:edid/$EDID_NAME"
+rpm-ostree kargs --append="video=HDMI-A-1:e"
 echo "[Optional] You can specify a specific output port such as HDMI-A-1:edid/$EDID_NAME"
 prompt_reboot
