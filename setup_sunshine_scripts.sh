@@ -36,39 +36,6 @@ global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNS
 EOF
 echo "sunshine.conf written."
 
-echo "Applying display wake from sleep fix...."
-cp force_display_wake.sh "${TARGET_HOME}/.local/bin/"
-echo "force_display_wake.sh moved to ${TARGET_HOME}/.local/bin/."
-chmod +x "${TARGET_HOME}/.local/bin/force_display_wake.sh"
-echo "force_display_wake.sh marked executable."
-
-USER_SYSTEMD_DIR="${TARGET_HOME}/.config/systemd/user"
-WAKE_UNIT="${USER_SYSTEMD_DIR}/wake_displays_from_sleep.service"
-
-echo "Creating user resume hook at ${WAKE_UNIT}..."
-mkdir -p "${USER_SYSTEMD_DIR}"
-cat > "${WAKE_UNIT}" <<'EOF'
-[Unit]
-Description=Wake displays after resume
-After=suspend.target
-
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/force_display_wake.sh
-
-[Install]
-WantedBy=suspend.target
-EOF
-
-echo "Enabling user resume hook..."
-if [[ $EUID -eq 0 ]]; then
-  sudo -u "${TARGET_USER}" systemctl --user daemon-reload
-  sudo -u "${TARGET_USER}" systemctl --user enable --now wake_displays_from_sleep.service || true
-else
-  systemctl --user daemon-reload
-  systemctl --user enable --now wake_displays_from_sleep.service || true
-fi
-
 unlock_script="$DEST/unlock_on_connect.sh"
 
 echo "Creating unlock script at $unlock_script..."
