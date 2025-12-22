@@ -44,7 +44,9 @@ global_prep_cmd = [{"do":"bash -c \"${HOME}/.local/bin/sunshine_do.sh \\\"${SUNS
 Notes:
 - The sleep helper scripts do not need sudo. They use per-user state under `${XDG_RUNTIME_DIR:-/tmp}` and `loginctl`/`systemctl` to suspend.
 - If you run them directly from the repo, ensure they are executable (`chmod +x sunshine_sleep.sh sunshine_cancel_sleep.sh`). The setup script handles this for the installed copies.
-- If you hit Wake on LAN issues on NVIDIA, try: `sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_PreserveVideoMemoryAllocations=1 sudo rpm-ostree kargs --append-if-missing=nvidia-drm.modeset=1 sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_EnableGpuFirmware=0`.
+- If you hit Wake on LAN issues on NVIDIA, try: `sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_PreserveVideoMemoryAllocations=1 sudo rpm-ostree kargs --append-if-missing=nvidia-drm.modeset=1 sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_EnableGpuFirmware=0`. Also try `sudo tee /etc/dracut.conf.d/99-edid.conf >/dev/null <<'EOF'
+install_items+=" /usr/lib/firmware/edid/[edidname].bin "
+EOF`
 
 ### Optional but HIGHLY RECOMMENDED
 Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only te `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
