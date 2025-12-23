@@ -11,10 +11,10 @@ hdr=${4:-"false"}
 
 hdr_args=()
 if [[ "$hdr" == "true" ]]; then
-        hdr_args+=( "output.HDMI-A-1.hdr.enable" )
-        hdr_args+=( "output.HDMI-A-1.wcg.enable" )
+        hdr_args+=( "output.DP-3.hdr.enable" )
+        hdr_args+=( "output.DP-3.wcg.enable" )
 else
-        hdr_args+=( "output.HDMI-A-1.hdr.disable" )
+        hdr_args+=( "output.DP-3.hdr.disable" )
 fi
 
 "${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
@@ -22,9 +22,9 @@ fi
 "${SCRIPT_DIR}/unlock_on_connect.sh"
 
 kscreen-doctor \
-        output.HDMI-A-1.enable \
-        output.HDMI-A-1.priority.1 \
-        output.HDMI-A-1.mode.${width}x${height}@${fps} \
+        output.DP-3.enable \
+        output.DP-3.priority.1 \
+        output.DP-3.mode.${width}x${height}@${fps} \
         "${hdr_args[@]}" \
         output.DP-1.disable \
         output.DP-2.disable
