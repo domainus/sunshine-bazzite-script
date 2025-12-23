@@ -23,7 +23,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 1) Clone this repo.
 2) Run `ujust setup-sunshine` if not done already. 
 3) Run `for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n "${con#*/card?-}: "; cat $p; done` to find a list of GPUs' free DP or HDMI output.
-4) Edit connector names to match your hardware: in `virtual_display_setup.sh` replace `DP-3` in the `drm.edid_firmware` arg with the target output, and in `sunshine_do.sh`/`sunshine_undo.sh` replace the default `DP-3` connector name with the one you found in step 3.
+4) Edit connector names to match your hardware: in `virtual_display_setup.sh` replace `HDMI-A-1` in the `drm.edid_firmware` arg with the target output, and in `sunshine_do.sh`/`sunshine_undo.sh` replace the default `HDMI-A-1` connector name with the one you found in step 3.
 
 ### Installation
 0) Kill the Sunshine Process

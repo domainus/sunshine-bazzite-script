@@ -57,7 +57,7 @@ echo "install_items+=\" /usr/lib/firmware/edid/$EDID_NAME \"" | sudo tee /etc/dr
 rpm-ostree initramfs --enable
 
 echo "=== Add kernel argument and reboot ==="
-rpm-ostree kargs --append="drm.edid_firmware=DP-3:edid/$EDID_NAME"
-rpm-ostree kargs --append="video=DP-3:e"
-echo "[Optional] You can specify a specific output port such as DP-3:edid/$EDID_NAME"
+rpm-ostree kargs --append="drm.edid_firmware=HDMI-A-1:edid/$EDID_NAME"
+rpm-ostree kargs --append="video=HDMI-A-1:e"
+echo "[Optional] You can specify a specific output port such as HDMI-A-1:edid/$EDID_NAME"
 prompt_reboot
