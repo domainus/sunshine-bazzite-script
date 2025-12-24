@@ -10,6 +10,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `setup_startup_failsafe_service.sh` — optional; installs a per-user systemd service that runs `fix_displays.sh` on login to recover if only the prep ran.
 - `wake_on_lan_fix_nvidia.sh` — installs a systemd resume hook (`nvidia-display-wake.service`) that wakes NVIDIA displays after suspend. Supports `--mode=loginctl|xset|kscreen`.
 - `uninstall_wake_on_lan_fix_nvidia.sh` — removes the `nvidia-display-wake.service` resume hook.
+- `nvidia-resume-fix.sh` — installs a KDE Wayland resume fix script at `/usr/local/bin/kde-wayland-fix-resume` and wires it to `systemd-suspend.service` via an override. Prompts for your output and mode.
 - `uninstall.sh` — modular uninstaller with flags for the EDID patch, Sunshine helper scripts/wake unit, streamer autologin hooks, and the failsafe service. Supports `--all`, `--dry-run`, and `--target-user`.
 
 ## Requirements
@@ -47,6 +48,10 @@ Notes:
 - If you hit Wake on LAN issues on NVIDIA, try: `sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_PreserveVideoMemoryAllocations=1 sudo rpm-ostree kargs --append-if-missing=nvidia-drm.modeset=1 sudo rpm-ostree kargs --append-if-missing=nvidia.NVreg_EnableGpuFirmware=0`. Also try `sudo tee /etc/dracut.conf.d/99-edid.conf >/dev/null <<'EOF'
 install_items+=" /usr/lib/firmware/edid/[edidname].bin "
 EOF`
+
+## KDE Wayland Resume Fix (NVIDIA)
+1) Run `sudo ./nvidia-resume-fix.sh` and enter your output (e.g. `DP-3`) and mode (e.g. `2560x1440@165`).
+2) This installs `/usr/local/bin/kde-wayland-fix-resume`, creates `/etc/systemd/system/systemd-suspend.service.d/override.conf` with `ExecStartPost=/usr/local/bin/kde-wayland-fix-resume`, and reloads systemd.
 
 ### Optional but HIGHLY RECOMMENDED
 Run `setup_startup_failsafe_service.sh`. This makes it to where it runs the `sunshine_undo.sh` script on startup in the event that when connecting to Sunshine only te `sunshine_do.sh` script runs. This can help fix black screens after logging in. (Ask me how I know :] )
@@ -102,3 +107,4 @@ https://www.reddit.com/r/Bazzite/comments/1gajkpg/add_a_custom_resolution/
 https://gist.github.com/iamthenuggetman/6d0884954653940596d463a48b2f459c  
 https://www.azdanov.dev/articles/2025/how-to-create-a-virtual-display-for-sunshine-on-arch-linux
 https://www.reddit.com/r/linux_gaming/comments/1h2o0re/comment/mtq730l/
+https://forums.linuxmint.com/viewtopic.php?t=440657&start=20
