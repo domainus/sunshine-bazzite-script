@@ -17,6 +17,36 @@ else
         hdr_args+=( "output.HDMI-A-1.hdr.disable" )
 fi
 
+get_dp_outputs() {
+        if command -v jq >/dev/null 2>&1; then
+                kscreen-doctor -j | jq -r '.outputs[] | select(.name | test("^DP-")) | .name'
+                return
+        fi
+
+        if command -v python3 >/dev/null 2>&1; then
+                python3 - <<'PY'
+import json
+import subprocess
+
+data = subprocess.check_output(["kscreen-doctor", "-j"], text=True)
+parsed = json.loads(data)
+for output in parsed.get("outputs", []):
+    name = output.get("name", "")
+    if name.startswith("DP-"):
+        print(name)
+PY
+                return
+        fi
+
+        kscreen-doctor -o | awk '/^Output:/{print $2}' | grep '^DP-'
+}
+
+dp_disable_args=()
+while IFS= read -r output; do
+        [[ -n "$output" ]] || continue
+        dp_disable_args+=( "output.${output}.disable" )
+done < <(get_dp_outputs)
+
 "${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
 
 "${SCRIPT_DIR}/unlock_on_connect.sh"
@@ -26,6 +56,4 @@ kscreen-doctor \
         output.HDMI-A-1.priority.1 \
         output.HDMI-A-1.mode.${width}x${height}@${fps} \
         "${hdr_args[@]}" \
-        output.DP-1.disable \
-        output.DP-2.disable
-
+        "${dp_disable_args[@]}"
