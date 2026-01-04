@@ -50,6 +50,7 @@ if [ -z "$SESSION_ID" ]; then
   exit 1
 fi
 /usr/bin/loginctl unlock-session "$SESSION_ID"
+logger -t sunshine-unlock "Unlock successful for session $SESSION_ID"
 EOF
 chmod +x "$unlock_script"
 
