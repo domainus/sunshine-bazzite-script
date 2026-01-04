@@ -41,15 +41,15 @@ PY
         kscreen-doctor -o | awk '/^Output:/{print $2}' | grep '^DP-'
 }
 
+"${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
+
+"${SCRIPT_DIR}/unlock_on_connect.sh"
+
 dp_disable_args=()
 while IFS= read -r output; do
         [[ -n "$output" ]] || continue
         dp_disable_args+=( "output.${output}.disable" )
 done < <(get_dp_outputs)
-
-"${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
-
-"${SCRIPT_DIR}/unlock_on_connect.sh"
 
 kscreen-doctor \
         output.HDMI-A-1.enable \
