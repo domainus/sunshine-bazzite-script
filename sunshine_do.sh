@@ -19,8 +19,6 @@ fi
 
 "${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
 
-"${SCRIPT_DIR}/unlock_on_connect.sh"
-
 get_dp_outputs() {
         if command -v jq >/dev/null 2>&1; then
                 kscreen-doctor -j | jq -r '.outputs[] | select(.name | test("^DP-")) | .name'
@@ -58,3 +56,6 @@ kscreen-doctor \
         output.HDMI-A-1.mode.${width}x${height}@${fps} \
         "${hdr_args[@]}" \
         "${dp_disable_args[@]}"
+
+
+"${SCRIPT_DIR}/unlock_on_connect.sh"
