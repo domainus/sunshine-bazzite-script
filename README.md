@@ -12,6 +12,7 @@ Scripts to get a Sunshine setup running on Bazzite with a virtual display (custo
 - `uninstall_wake_on_lan_fix_nvidia.sh` — removes the `nvidia-display-wake.service` resume hook.
 - `nvidia-resume-fix.sh` — installs a KDE Wayland resume fix script at `/usr/local/bin/kde-wayland-fix-resume` and wires it to `systemd-suspend.service` via an override. Prompts for your output and mode.
 - `uninstall.sh` — modular uninstaller with flags for the EDID patch, Sunshine helper scripts/wake unit, streamer autologin hooks, and the failsafe service. Supports `--all`, `--dry-run`, and `--target-user`.
+- `sunshine_tui.sh` — TUI launcher that aggregates the scripts into a single menu-driven interface.
 
 ## Requirements
 - Bazzite with `rpm-ostree`
