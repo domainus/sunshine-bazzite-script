@@ -17,6 +17,10 @@ else
         hdr_args+=( "output.HDMI-A-1.hdr.disable" )
 fi
 
+"${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
+
+"${SCRIPT_DIR}/unlock_on_connect.sh"
+
 get_dp_outputs() {
         if command -v jq >/dev/null 2>&1; then
                 kscreen-doctor -j | jq -r '.outputs[] | select(.name | test("^DP-")) | .name'
@@ -41,9 +45,6 @@ PY
         kscreen-doctor -o | awk '/^Output:/{print $2}' | grep '^DP-'
 }
 
-"${SCRIPT_DIR}/sunshine_cancel_sleep.sh"
-
-"${SCRIPT_DIR}/unlock_on_connect.sh"
 
 dp_disable_args=()
 while IFS= read -r output; do
