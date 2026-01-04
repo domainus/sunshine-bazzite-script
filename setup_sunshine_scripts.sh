@@ -44,8 +44,9 @@ cat >"$unlock_script" <<'EOF'
 sleep 3
 # Unlocks the session for user ryan when Sunshine client connects
 SESSION_ID="$(loginctl list-sessions --no-legend --no-pager | awk '$3=="ryan" {print $1; exit}')"
+logger -t sunshine-unlock "Unlock attempt for session $SESSION_ID"
 if [ -z "$SESSION_ID" ]; then
-  echo "No active session found for user ryan" >&2
+  trap 'rc=$?; logger -t sunshine-unlock "exit=$rc"; exit $rc' EXIT
   exit 1
 fi
 /usr/bin/loginctl unlock-session "$SESSION_ID"
