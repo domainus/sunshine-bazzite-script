@@ -50,6 +50,8 @@ while IFS= read -r output; do
         dp_disable_args+=( "output.${output}.disable" )
 done < <(get_dp_outputs)
 
+
+
 kscreen-doctor \
         output.HDMI-A-1.enable \
         output.HDMI-A-1.priority.1 \

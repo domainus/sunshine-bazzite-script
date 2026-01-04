@@ -42,8 +42,17 @@ echo "Creating unlock script at $unlock_script..."
 cat >"$unlock_script" <<'EOF'
 #!/usr/bin/env bash
 sleep 3
-# Unlocks the session for user ryan when Sunshine client connects
-SESSION_ID="$(loginctl list-sessions --no-legend --no-pager | awk '$3=="ryan" {print $1; exit}')"
+# Unlocks the Wayland session for user ryan when Sunshine client connects
+SESSION_ID="$(
+  while read -r sid; do
+    type="$(loginctl show-session "$sid" -p Type --value 2>/dev/null || true)"
+    active="$(loginctl show-session "$sid" -p Active --value 2>/dev/null || true)"
+    if [ "$type" = "wayland" ] && [ "$active" = "yes" ]; then
+      printf '%s\n' "$sid"
+      break
+    fi
+  done < <(loginctl list-sessions --no-legend --no-pager | awk '$3=="ryan" {print $1}')
+)"
 logger -t sunshine-unlock "Unlock attempt for session $SESSION_ID"
 if [ -z "$SESSION_ID" ]; then
   trap 'rc=$?; logger -t sunshine-unlock "exit=$rc"; exit $rc' EXIT
